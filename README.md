@@ -1,100 +1,140 @@
 # ForgeDash
 
-**Modern web-based admin dashboard for Minecraft servers (v2.0)**
+<div align="center">
 
-Dash provides a comprehensive web interface for server administration, enabling you to manage your Minecraft server from any device with a browser. Monitor server performance, manage players, execute commands, configure settings, and handle backups—all through an elegant, modern web UI.
+**Modern web-based admin dashboard for Minecraft servers**
 
-## Version
+Manage, monitor, and moderate your Minecraft server from any device with a browser.
 
-- Current version: **2.1.5**
+[![Release](https://img.shields.io/badge/release-v4.0-10b981?style=for-the-badge)](../../releases)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21%2B-62b47a?style=for-the-badge)](#supported-versions)
+[![Java](https://img.shields.io/badge/Java-21%2B-f89820?style=for-the-badge)](#supported-versions)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue?style=for-the-badge)](LICENSE)
+
+</div>
+
+---
+
+## Overview
+
+ForgeDash is a powerful web administration panel for Paper, Spigot, and compatible Minecraft servers. It gives server owners and staff a clean, responsive interface for monitoring performance, managing players, running console commands, editing files, configuring server settings, and handling backups without needing direct terminal access.
+
+ForgeDash is built for everyday administration: quick setup, secure registration, audit-friendly actions, mobile-friendly layouts, and enough control to manage a live server from a desktop, tablet, or phone.
+
+## Current Release
+
+- **Latest version:** `v4.0`
+- **Release:** available from the [GitHub releases page](../../releases)
+- **License:** BSD 3-Clause
 
 ## Features
 
-### 📊 Real-Time Monitoring
-- Live server statistics (TPS, memory, CPU usage)
+### Real-Time Monitoring
+
+- Live server statistics, including TPS, memory usage, and CPU usage
 - Historical performance graphs and analytics
-- Online player tracking with detailed profiles
-- Console log streaming with color-coded output
+- Online player tracking with detailed player profiles
+- Live console log streaming with color-coded output
 - Setup-safe telemetry endpoints for panel integrations
 
-### 👥 Player Management
-- View all players with session history and playtime
-- Kick, ban, freeze, or teleport players
+### Player Management
+
+- View all players with session history and playtime tracking
+- Kick, ban, freeze, or teleport players from the web panel
 - Add and manage admin notes for players
 - View and edit player inventories and ender chests
-- Whitelist management
+- Manage the server whitelist
 
-### ⚙️ Server Configuration
-- Modify server settings (MOTD, view distance, simulation distance)
-- Configure game rules for all worlds
-- Upload and manage server icon
-- Enable/disable plugins dynamically
+### Server Configuration
 
-### 💾 Backup System
+- Modify common server settings such as MOTD, view distance, and simulation distance
+- Configure game rules across worlds
+- Upload and manage the server icon
+- Enable or disable plugins dynamically where supported
+
+### Backup System
+
 - Create manual backups instantly
 - Schedule automatic backups
 - Download backup archives
-- Manage backup retention (configurable max backups)
+- Configure backup retention with a maximum backup limit
 
-### 📁 File Management
-- Browse server files and directories
-- Edit configuration files directly in the browser
+### File Management
+
+- Browse server files and directories directly in the browser
+- Edit configuration files from the web interface
 - Upload files and plugins
 - Upload and manage datapacks
 
-### 🎮 Advanced Features
-- Execute console commands remotely
-- Teleport players to coordinates or other players
-- Broadcast messages as admin or server
-- Player freeze system for moderation
-- Web-based registration system with time-limited codes
+### Console and Moderation Tools
 
-### 🔐 SSO + Approval Workflow (v2.0)
+- Execute console commands remotely
+- Teleport players to coordinates or to other players
+- Broadcast messages as the server or as an admin
+- Use the player freeze system for moderation workflows
+- Register web admins through time-limited in-game registration codes
+
+### SSO and Approval Workflow
+
 - NeoDash bridge SSO bootstrap flow
 - Waiting room for identities pending admin approval
-- Pending bridge-user review directly in the Users page
-- Role assignment during bridge approval
+- Review pending bridge users directly from the Users page
+- Assign roles during bridge approval
 - Bridge-aware navigation and session handoff
 
-### 📱 Responsive UI Improvements (v2.0)
+### Responsive Web UI
+
 - Reworked global scrolling behavior
-- Mobile-first table handling for Players, Tasks, and Audit pages
-- Overflow/clipping fixes for action menus and card actions
-- Improved mobile form layout in Settings pages
+- Mobile-first handling for Players, Tasks, and Audit pages
+- Improved overflow and clipping behavior for action menus and card actions
+- Better mobile form layouts in Settings pages
 
 ## Installation
 
-1. Download the latest `Dash.jar` from the [releases page](../../releases)
-2. Place the JAR file in your server's `plugins` folder
-3. Restart your server
-4. Configure the web port in `plugins/Dash/config.yml` (default: 8080)
-5. Restart the server again to apply configuration
+1. Download the latest release JAR from the [releases page](../../releases).
+2. Place the JAR file in your server's `plugins` folder.
+3. Restart your Minecraft server.
+4. Configure the web port in `plugins/Dash/config.yml` if needed. The default port is `8080`.
+5. Restart the server again to apply the configuration.
 
-## Usage
+## Initial Setup
 
-### Initial Setup
+1. Join your server as an operator.
+2. Run `/dash register` in-game to generate a registration code.
+3. Open the dashboard in your browser:
 
-1. Join your server as an operator
-2. Run `/dash register` to generate a registration code
-3. Open the web dashboard at `http://localhost:PORT` (replace PORT with your configured port)
-4. Enter your registration code and create admin credentials
-5. Log in with your new credentials
+   ```text
+   http://localhost:8080
+   ```
 
-### Commands
+   Replace `8080` with your configured port if you changed it.
+
+4. Enter the registration code and create your admin account.
+5. Log in and start managing your server through ForgeDash.
+
+> For production use, run ForgeDash behind HTTPS through a reverse proxy or a secure hosting panel whenever the dashboard is exposed outside your local machine.
+
+## Commands
 
 | Command | Description | Permission |
-|---------|-------------|------------|
-| `/dash register` | Generate a web registration code (expires in 5 minutes) | `dash.register` |
+| --- | --- | --- |
+| `/dash register` | Generates a web registration code that expires after 5 minutes. | `dash.register` |
 
-### Permissions
+## Permissions
 
 | Permission | Description | Default |
-|-----------|-------------|---------|
-| `dash.register` | Allows generating web registration codes | op |
+| --- | --- | --- |
+| `dash.register` | Allows a player to generate web registration codes. | `op` |
 
 ## Configuration
 
-Edit `plugins/Dash/config.yml`:
+ForgeDash stores its configuration in:
+
+```text
+plugins/Dash/config.yml
+```
+
+Example configuration:
 
 ```yaml
 # Web server port for the admin dashboard
@@ -111,41 +151,60 @@ backups:
   max-backups: 10
 ```
 
-**Configuration Options:**
-- `port`: Web server port (default: 8080)
-- `database.type`: Database type (currently supports SQLite)
-- `database.file`: Database file name
-- `backups.directory`: Backup storage directory
-- `backups.max-backups`: Maximum number of backups to retain
+### Configuration Options
+
+| Option | Description | Default |
+| --- | --- | --- |
+| `port` | Web server port used by the dashboard. | `8080` |
+| `database.type` | Database backend for player data tracking. Currently supports SQLite. | `sqlite` |
+| `database.file` | SQLite database file name. | `dash.db` |
+| `backups.directory` | Directory used for backup archives. | `backups` |
+| `backups.max-backups` | Maximum number of backups to retain. | `10` |
 
 ## Supported Versions
 
-- **Minecraft:** 1.21, 1.21.1, 1.21.2, 1.21.3, 1.21.4+
-- **Server Software:** Paper, Spigot, and compatible forks
-- **Java:** 21 or higher
+| Requirement | Supported |
+| --- | --- |
+| Minecraft | `1.21`, `1.21.1`, `1.21.2`, `1.21.3`, `1.21.4+` |
+| Server software | Paper, Spigot, and compatible forks |
+| Java | `21` or higher |
 
 ## Security
 
+ForgeDash includes several built-in security measures for safer server administration:
+
 - Registration codes expire after 5 minutes
-- Session-based authentication with secure cookies
-- Session hardening updates in v2.0 (session-cookie behavior + explicit logout flow)
-- All actions are logged with IP tracking
-- File upload validation and path sanitization
-- Admin credentials are hashed and stored securely
+- Session-based authentication with secure cookie handling
+- Explicit logout flow and session hardening updates
+- Admin credentials are hashed before storage
+- File uploads are validated
+- File paths are sanitized to reduce traversal risks
+- Administrative actions are logged with IP tracking
 
-## License
+## Recommended Production Setup
 
-This project is licensed under the BSD 3-Clause License - see the LICENSE file for details.
+When exposing the dashboard publicly, use a secure deployment setup:
+
+- Put ForgeDash behind HTTPS
+- Restrict the dashboard port with a firewall where possible
+- Use strong admin credentials
+- Only approve bridge users you trust
+- Keep ForgeDash updated through the latest GitHub release
+- Regularly download or rotate important backups
 
 ## Author
 
-Developed by **Frxme**
+Developed by **Frxme**.
+
+## License
+
+This project is licensed under the **BSD 3-Clause License**. See [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
 
-## 🤝 Partner
+## Partner
 
 <a href="https://emeraldhost.de/frxme">
   <img src="https://cdn.emeraldhost.de/branding/icon/icon.png" width="80" alt="Emerald Host Logo">
@@ -153,14 +212,15 @@ Developed by **Frxme**
 
 ### Powered by EmeraldHost
 
-*DDoS-Protection, NVMe Performance und 99.9% Uptime.* *Der Host meines Vertrauens für alle Development-Server.*
+*DDoS-Protection, NVMe Performance und 99.9% Uptime.*  
+*Der Host meines Vertrauens für alle Development-Server.*
 
 <a href="https://emeraldhost.de/frxme">
-  <img src="https://img.shields.io/badge/Code-Frxme10-10b981?style=for-the-badge&logo=gift&logoColor=white&labelColor=0f172a" alt="Use Code Frxme10 for 10% off">
+  <img src="https://img.shields.io/badge/Code-Frxme10-10b981?style=for-the-badge&logo=gift&logoColor=white&labelColor=0f172a" alt="Use code Frxme10 for 10% off">
 </a>
 
 </div>
 
 ---
 
-*For issues, feature requests, or contributions, please visit the [GitHub repository](../../issues)*
+*For issues, feature requests, or contributions, please visit the [GitHub repository](../../issues).*
