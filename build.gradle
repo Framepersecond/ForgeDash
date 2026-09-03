@@ -1,0 +1,283 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'idea'
+}
+
+version = project.mod_version
+group = project.mod_group_id
+
+def dashTargets = [
+        '1.21'   : [minecraft: '1.21',    minecraftRange: '[1.21,1.21.1)',     neo: '21.0.167',     neoRange: '[21.0,21.1)',       java: 21],
+        '1.21.1' : [minecraft: '1.21.1',  minecraftRange: '[1.21.1,1.21.2)',   neo: '21.1.249',     neoRange: '[21.1,21.2)',       java: 21],
+        '1.21.2' : [minecraft: '1.21.2',  minecraftRange: '[1.21.2,1.21.3)',   neo: '21.2.1-beta',  neoRange: '[21.2,21.3)',       java: 21],
+        '1.21.3' : [minecraft: '1.21.3',  minecraftRange: '[1.21.3,1.21.4)',   neo: '21.3.97',      neoRange: '[21.3,21.4)',       java: 21],
+        '1.21.4' : [minecraft: '1.21.4',  minecraftRange: '[1.21.4,1.21.5)',   neo: '21.4.157',     neoRange: '[21.4,21.5)',       java: 21],
+        '1.21.5' : [minecraft: '1.21.5',  minecraftRange: '[1.21.5,1.21.6)',   neo: '21.5.98',      neoRange: '[21.5,21.6)',       java: 21],
+        '1.21.6' : [minecraft: '1.21.6',  minecraftRange: '[1.21.6,1.21.7)',   neo: '21.6.20-beta', neoRange: '[21.6,21.7)',       java: 21],
+        '1.21.7' : [minecraft: '1.21.7',  minecraftRange: '[1.21.7,1.21.8)',   neo: '21.7.25-beta', neoRange: '[21.7,21.8)',       java: 21],
+        '1.21.8' : [minecraft: '1.21.8',  minecraftRange: '[1.21.8,1.21.9)',   neo: '21.8.54',      neoRange: '[21.8,21.9)',       java: 21],
+        '1.21.9' : [minecraft: '1.21.9',  minecraftRange: '[1.21.9,1.21.10)',  neo: '21.9.16-beta', neoRange: '[21.9,21.10)',      java: 21],
+        '1.21.10': [minecraft: '1.21.10', minecraftRange: '[1.21.10,1.21.11)', neo: '21.10.64',     neoRange: '[21.10,21.11)',     java: 21],
+        '1.21.11': [minecraft: '1.21.11', minecraftRange: '[1.21.11,1.21.12)', neo: '21.11.45',     neoRange: '[21.11,21.12)',     java: 21],
+        '26.2'   : [minecraft: '26.2',    minecraftRange: '[26.2,26.3)',       neo: '26.2.0.75',    neoRange: '[26.2,26.3)',       java: 25]
+]
+def dashTargetName = providers.gradleProperty('dash_target').orElse('26.2').get()
+def dashTarget = dashTargets[dashTargetName]
+if (dashTarget == null) {
+    throw new GradleException("Unsupported Dash target '${dashTargetName}'. Available targets: ${dashTargets.keySet().join(', ')}")
+}
+
+base {
+    archivesName = "${project.mod_id}-mc${dashTargetName}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(dashTarget.java as int)
+
+neoForge {
+    version = dashTarget.neo
+
+    runs {
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        serverData {
+            serverData()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+def legacyCompatSources = layout.buildDirectory.dir("generated/sources/dashCompat/${dashTargetName}/java")
+if (dashTargetName.startsWith('1.21') && dashTargetName != '1.21.11') {
+    def oldestLegacyTarget = dashTargetName in ['1.21', '1.21.1']
+    def legacyClickEventTarget = dashTargetName in ['1.21', '1.21.1', '1.21.2', '1.21.3', '1.21.4']
+    def legacyProfileTarget = dashTargetName in ['1.21', '1.21.1', '1.21.2', '1.21.3', '1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8']
+    def generateLegacyCompatSources = tasks.register('generateLegacyCompatSources', Sync) {
+        inputs.file('build.gradle')
+        from('src/main/java')
+        into(legacyCompatSources)
+        filteringCharset = 'UTF-8'
+
+        filesMatching('**/*.java') {
+            filter { String line ->
+                def transformed = line
+                        .replace('import net.minecraft.resources.Identifier;', 'import net.minecraft.resources.ResourceLocation;')
+                        .replace('import net.minecraft.world.level.gamerules.GameRule;', 'import net.minecraft.world.level.GameRules;')
+                        .replace('import net.minecraft.world.level.gamerules.GameRules;', '')
+                        .replace('import net.minecraft.server.permissions.Permissions;', '')
+                        .replace('source.permissions().hasPermission(Permissions.COMMANDS_OWNER)', 'source.hasPermission(4)')
+                        .replace('player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)', 'player.hasPermissions(2)')
+                        .replace('.dimension().identifier()', '.dimension().location()')
+                        .replace('Identifier.tryParse(', 'ResourceLocation.tryParse(')
+                        .replace('Identifier id', 'ResourceLocation id')
+                        .replace('private Identifier identifier(', 'private ResourceLocation identifier(')
+                        .replace('GameRule<Boolean>', 'GameRules.Key<GameRules.BooleanValue>')
+                        .replace('GameRules.KEEP_INVENTORY', 'GameRules.RULE_KEEPINVENTORY')
+                        .replace('GameRules.SPAWN_MOBS', 'GameRules.RULE_DOMOBSPAWNING')
+                        .replace('GameRules.ADVANCE_TIME', 'GameRules.RULE_DAYLIGHT')
+                        .replace('GameRules.ADVANCE_WEATHER', 'GameRules.RULE_WEATHER_CYCLE')
+                        .replace('GameRules.MOB_GRIEFING', 'GameRules.RULE_MOBGRIEFING')
+                        .replace('GameRules.NATURAL_HEALTH_REGENERATION', 'GameRules.RULE_NATURAL_REGENERATION')
+                        .replace('world.getGameRules().set(rule, value, server);', 'world.getGameRules().getRule(rule).set(value, server);')
+                        .replace('overworld.getGameRules().get(gameRule)', 'overworld.getGameRules().getBoolean(gameRule)')
+                        .replace('import net.neoforged.neoforge.event.level.block.BreakBlockEvent;', '')
+                        .replace('onBlockBreak(BreakBlockEvent event)', 'onBlockBreak(BlockEvent.BreakEvent event)')
+                if (legacyClickEventTarget) {
+                    transformed = transformed.replace('new ClickEvent.OpenUrl(URI.create(setupUrl))', 'new ClickEvent(ClickEvent.Action.OPEN_URL, setupUrl)')
+                            .replace('new ClickEvent.OpenUrl(URI.create(base + "/staff"))', 'new ClickEvent(ClickEvent.Action.OPEN_URL, base + "/staff")')
+                            .replace('new ClickEvent.OpenUrl(URI.create(reportUrl))', 'new ClickEvent(ClickEvent.Action.OPEN_URL, reportUrl)')
+                }
+                if (legacyProfileTarget) {
+                    transformed = transformed
+                            .replace('import net.minecraft.server.players.NameAndId;', 'import com.mojang.authlib.GameProfile;')
+                            .replace('NameAndId.createOffline(playerName)', 'new GameProfile(java.util.UUID.nameUUIDFromBytes(("OfflinePlayer:" + playerName).getBytes(java.nio.charset.StandardCharsets.UTF_8)), playerName)')
+                            .replace('NameAndId.createOffline(name)', 'new GameProfile(java.util.UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(java.nio.charset.StandardCharsets.UTF_8)), name)')
+                            .replace('NameAndId', 'GameProfile')
+                            .replace('.nameAndId()', '.getGameProfile()')
+                            .replace('server.setUsingWhitelist(', 'server.getPlayerList().setUsingWhiteList(')
+                            .replace('profile.name()', 'profile.getName()')
+                            .replace('.getGameProfile().name()', '.getGameProfile().getName()')
+                }
+                return transformed
+            }
+        }
+
+        if (oldestLegacyTarget) {
+            filesMatching(['dash/AdminWebServer.java', 'dash/guardian/GuardianActionService.java']) {
+                filter { String line ->
+                    line
+                            .replace('BuiltInRegistries.BLOCK.get(id).map(ref -> ref.value()).orElse(Blocks.AIR)', 'BuiltInRegistries.BLOCK.get(id)')
+                            .replace('BuiltInRegistries.ITEM.get(id).map(ref -> ref.value()).orElse(Items.AIR)', 'BuiltInRegistries.ITEM.get(id)')
+                }
+            }
+
+            filesMatching('dash/FreezeManager.java') {
+                filter { String line ->
+                    if (line.trim() == 'java.util.Set.of(),') return ''
+                    if (line.trim() == 'player.getYRot(), player.getXRot(),') return line.replace('player.getYRot(), player.getXRot(),', 'player.getYRot(), player.getXRot()')
+                    if (line.trim() == 'true' && line.startsWith('                        ')) return ''
+                    return line
+                }
+            }
+        }
+    }
+    sourceSets.main.java.setSrcDirs([legacyCompatSources])
+    tasks.named('compileJava') {
+        dependsOn generateLegacyCompatSources
+    }
+}
+if (dashTargetName == '1.21.11') {
+    def generate12111CompatSources = tasks.register('generate12111CompatSources', Sync) {
+        inputs.file('build.gradle')
+        from('src/main/java')
+        into(legacyCompatSources)
+        filteringCharset = 'UTF-8'
+        filesMatching('dash/GuardianForgeEvents.java') {
+            filter { String line ->
+                line
+                        .replace('import net.neoforged.neoforge.event.level.block.BreakBlockEvent;', '')
+                        .replace('onBlockBreak(BreakBlockEvent event)', 'onBlockBreak(BlockEvent.BreakEvent event)')
+            }
+        }
+    }
+    sourceSets.main.java.setSrcDirs([legacyCompatSources])
+    tasks.named('compileJava') {
+        dependsOn generate12111CompatSources
+    }
+}
+
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+    exclude("**/*.bbmodel")
+    exclude("src/generated/**/.cache")
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'WorkspaceOffline'
+        url = uri('../.gradle-offline-repo')
+        metadataSources {
+            gradleMetadata()
+            mavenPom()
+            artifact()
+        }
+    }
+    maven {
+        name = 'WorkspaceMaven'
+        url = uri('../.m2/repository')
+        metadataSources {
+            mavenPom()
+            artifact()
+        }
+    }
+}
+
+dependencies {
+    implementation("org.xerial:sqlite-jdbc:3.53.1.0")
+    runtimeOnly("org.xerial:sqlite-jdbc:3.53.1.0")
+    testImplementation("com.google.code.gson:gson:2.14.0")
+    testRuntimeOnly("org.slf4j:slf4j-api:2.0.17")
+
+    jarJar("org.xerial:sqlite-jdbc:3.53.1.0")
+}
+
+configurations.configureEach {
+    resolutionStrategy.dependencySubstitution {
+        substitute module("org.checkerframework:checker-qual:3.12.0") using module("org.checkerframework:checker-qual:3.33.0")
+        substitute module("com.google.errorprone:error_prone_annotations:2.11.0") using module("com.google.errorprone:error_prone_annotations:2.18.0")
+    }
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : dashTarget.minecraft,
+            minecraft_version_range: dashTarget.minecraftRange,
+            neo_version            : dashTarget.neo,
+            neo_version_range      : dashTarget.neoRange,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+
+tasks.register('printDashTarget') {
+    group = 'help'
+    description = 'Prints the selected Minecraft and NeoForge build target.'
+    doLast {
+        println "Dash target ${dashTargetName}: Minecraft ${dashTarget.minecraft}, NeoForge ${dashTarget.neo}, Java ${dashTarget.java}"
+    }
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named("test") {
+    failOnNoDiscoveredTests = false
+}
+
+tasks.register("securityRegressionTest", JavaExec) {
+    group = "verification"
+    description = "Runs the standalone Dash security regression suite."
+    dependsOn tasks.named("testClasses")
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "dash.security.SecurityUtilitiesTest"
+}
+
+tasks.named("check") {
+    dependsOn tasks.named("securityRegressionTest")
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
