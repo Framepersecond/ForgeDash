@@ -1,301 +1,145 @@
 # ForgeDash
 
-<div align="center">
+**Version 5.0 - Material 3 Expressive interface and full language support**
 
-**Modern web-based admin dashboard for NeoForge Minecraft servers**
+ForgeDash is the NeoForge edition of Dash. It unifies live operations, player care, Guardian, files, verified backups, mod maintenance and evidence-driven recovery in one self-hosted interface.
 
-Manage, monitor, moderate, update, and maintain your NeoForge server from any device with a browser.
+[![Version](https://img.shields.io/badge/version-5.0.0-22d3ee)](#release-status)
+[![Loader](https://img.shields.io/badge/loader-NeoForge-f97316)](#requirements)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.x%20%7C%2026.2%20%7C%2026.3-22c55e)](#requirements)
+[![Java](https://img.shields.io/badge/Java-21%20%7C%2025-f97316)](#requirements)
 
-[![Release](https://img.shields.io/badge/release-v4.0-10b981?style=for-the-badge)](../../releases)
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21%2B-62b47a?style=for-the-badge)](#supported-versions)
-[![NeoForge](https://img.shields.io/badge/NeoForge-supported-f97316?style=for-the-badge)](#supported-versions)
-[![Java](https://img.shields.io/badge/Java-21%2B-f89820?style=for-the-badge)](#supported-versions)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue?style=for-the-badge)](LICENSE)
+## New in 5.0
 
-</div>
+Dash 5.0 is the biggest release so far: a new Material 3 Expressive interface in 14 languages, a standard MCP server instead of a built-in AI, a much more careful Autopilot, a complete security layer, and operations and community tools that run your server for you.
+
+- **Material 3 Expressive interface** on every page, with phone layout, dark and light themes and 14 languages
+- **Autopilot**: explained, guarded, undoable automatic fixes with learning statistics and your own rules
+- **AI access (MCP)**: connect Claude, ChatGPT-compatible clients, Cursor or scripts through scoped API tokens, off by default
+- **Security**: two-factor login and passkeys for everyone, session overview with new-device alerts, IP allow-list, signed audit log, guided secret rotation
+- **Operations**: scheduled restarts with countdown, one-click maintenance mode, lag detective, update manager with trial run and rollback, encrypted offsite backups with automatic restore test
+- **Community**: public status page, whitelist applications, ban appeals, chat moderation, GDPR export and erase
+- **No more beta**: Intelligence, Maintenance and Guardian are regular features; the internal Dash AI is gone, replaced by MCP
+
+Not every build has everything yet. The table shows what each project contains in 5.0:
+
+| Feature | Dash (Paper) | FabricDash / ForgeDash | NeoDash |
+| --- | :---: | :---: | :---: |
+| Material 3 Expressive UI, 14 languages | yes | yes | yes |
+| Scoped API tokens and write API | yes | yes | yes |
+| MCP server (AI access) | yes | yes | yes (fleet tools) |
+| Autopilot core | yes | yes | fleet cards |
+| Autopilot learning statistics, custom rules, snooze | yes | not yet | fleet warnings |
+| 2FA, passkeys, sessions, new-device alerts | yes | yes | yes |
+| IP allow-list, signed audit log, secret rotation | yes | yes | yes |
+| Scheduled restarts, maintenance mode, lag detective | yes | not yet | not applicable |
+| Update manager, offsite backups | yes | not yet | not applicable |
+| Status page, applications, appeals, chat moderation, GDPR | yes | not yet | not applicable |
+
+---
+## Partner
+
+Dash is proudly partnered with **EmeraldHost**, a Minecraft server host. Use the code **Frxme10** for **10% off** your server.
+
+If Dash saves you time, you can support its development on [Buy Me a Coffee](https://buymeacoffee.com/frxme). Thank you!
 
 ---
 
-## Overview
+## Languages
 
-ForgeDash is a powerful web administration panel for NeoForge Minecraft servers. It gives server owners and staff a clean, responsive interface for monitoring performance, managing players, running console commands, browsing files, maintaining mods, reviewing Guardian activity, and applying GitHub-backed updates without needing direct terminal access for every task.
+The whole interface is available in **English, German (Deutsch), Spanish (Español), French (Français), Italian, Portuguese, Dutch, Polish, Turkish, Russian, Japanese, Korean, Simplified Chinese (简体中文) and Traditional Chinese (繁體中文)**.
 
-ForgeDash is built for everyday server administration: quick setup, secure registration, audit-friendly actions, mobile-friendly layouts, local NeoForge maintenance, and a polished browser experience for desktop, tablet, and mobile operators.
+- Pick a language from the translate button in the top bar (or the drawer on phones), in *Settings → Language*, or choose **Automatic** to follow the browser. The sign-in page follows the browser or the last choice too.
+- Every user keeps their own choice; it is saved with the account and a `dash_lang` cookie.
+- Translations ship as one dictionary per language (`web/i18n/<code>.json`), served as an immutable, content-hashed asset, so a page only loads the language it needs.
+- German, Spanish, French and both Chinese variants are translated by hand end to end; the other languages are hand-translated for all labels and buttons, with long explanatory sentences machine-translated with MADLAD-400 (Apache-2.0) and checked for placeholders. Anything still untranslated falls back to English.
 
-## Current Release
+## Intelligence Center
 
-- **Latest version:** `v4.0`
-- **Release date:** `2026-07-06`
-- **Release:** available from the [GitHub releases page](../../releases)
-- **License:** BSD 3-Clause
+Version 4.3 connects 25 complete operator tools to ForgeDash's real mod inventory, backup, scheduler and server lifecycle services.
 
-## What's New in ForgeDash 4.0
+| Workspace | Features |
+|---|---|
+| Investigate | Shadow Boot Lab, Root Cause Explorer, Performance Regression Radar, Plugin/Mod Resource Attribution, Guided Safe Mode, Dependency and Impact Map. |
+| Change | State Time Machine, Backup Content Explorer, Adaptive Maintenance Window, Action Guardrails. |
+| Players | Player Journey Replay, Support and Appeals Inbox, Cross-Server Player Identity, Player Experience Score. |
+| Policy | Just-in-Time Staff Access, Dual-Control Actions, Retention Center. |
+| Supply | Supply Chain Center, Config Schema Assistant, Universal Search. |
+| Reliability | World Health Center, Storage Intelligence, Service Level Dashboard. |
+| Response | Operator War Room, Public Status Page. |
 
-ForgeDash 4.0 is the major NeoForge release after 3.1. It brings the new Dash motion system, a cleaner Guardian experience, stronger file interactions, local NeoForge mod maintenance, and clearer GitHub-backed update workflows.
+Shadow Boot works on isolated copies, dependency views understand NeoForge artifacts and state restore stages every file before an integrity-verified transaction. High-risk actions can require reasons, quiet hours, verified backups, temporary rights or a second operator.
 
-### Dash Motion System
+## Complete NeoForge Dashboard
 
-- Rebuilt the shared animation layer for smoother page transitions and content swaps.
-- Added smoother card entrances, row reveals, hover lift, press feedback, status flips, and value flashes.
-- Removed the bumpy feel when switching between pages.
-- Preserved reduced-motion support for users who prefer less animation.
-- Tuned transitions around transform and opacity patterns for a smoother browser experience.
+| Area | Capability |
+|---|---|
+| Live operations | TPS, memory, CPU, uptime, online players, console stream and authorized commands. |
+| Players | Profiles, notes, freeze, kick, ban, teleport, whitelist and inventory tools. |
+| Guardian | Cases, evidence, block/container history, incidents, scores, rollback previews and import tools. |
+| Files | Whole-row navigation, upload and folder upload, edit, rename, download and guarded delete. |
+| Backups | Verified backups, schedules, retention, restore points, download and delete. |
+| Mods | Installed mod inventory, JAR upload, Modrinth browser, startup scan and update hints. |
+| Intelligence | Diagnosis, guarded changes, recovery, player care, supply-chain checks and coordinated response. |
+| Staff and delivery | Tickets, notes, Discord delivery tests, notifications, graphs and activity. |
+| NeoDash bridge | Signed SSO, approval-aware users, HTTPS-aware return links and fleet restart routing. |
 
-### Guardian Improvements
+## Evolution Since 3.1
 
-- Shortened the Guardian activity area with a fixed-height, scrollable table surface.
-- Added paging for Timeline, Blocks, and Containers.
-- Added sticky activity headers for easier scanning.
-- Spread Guardian tools across a full-width responsive grid instead of stacking everything in one right-side column.
-- Kept Guardian cases, notes, rollback, incidents, scores, replay, restore, alert rules, retention, purge, and import tools available.
-
-### Files and Mod Maintenance
-
-- File and folder rows now open from the whole row bubble, not only from the name.
-- Upload, edit, rename, download, and delete flows keep operators in context.
-- NeoForge mod maintenance remains local to ForgeDash.
-- Installed mod state, JAR upload, and Modrinth search are available from the dashboard.
-
-### GitHub and Update Workflows
-
-- GitHub-backed release checks remain targeted at `Framepersecond/ForgeDash`.
-- Update scans are rate-limit aware.
-- Manual update scans can retry when needed.
-- Staged updates apply through the NeoForge mods workflow.
-
-### NeoDash Bridge
-
-- Restart from a NeoDash SSO session delegates to NeoDash's configured start path.
-- Restart redirects into NeoDash startup-log visibility for NeoForge servers.
-- Bridge values are stored consistently with Dash and FabricDash.
-
-### Release Metadata
-
-- Gradle `mod_version` updated to `4.0`.
-- ForgeDash documentation no longer carries Fabric-specific wording.
-
-## Features
-
-### Real-Time Monitoring
-
-- Live server statistics, including TPS, memory usage, and CPU usage.
-- Historical performance graphs and analytics.
-- Online player tracking with detailed player profiles.
-- Live console log streaming with color-coded output.
-- Setup-safe telemetry endpoints for panel integrations.
-- Graph snapshots and performance views for server health checks.
-
-### Guardian
-
-- Guardian activity review with fixed-height, scrollable table surfaces.
-- Timeline, Blocks, and Containers paging for larger datasets.
-- Sticky headers for easier activity scanning.
-- Full-width responsive Guardian tool grid.
-- Cases, notes, rollback, incidents, scores, replay, restore, alert rules, retention, purge, and import tools.
-
-### Player Management
-
-- View all players with session history and playtime tracking.
-- Kick, ban, freeze, or teleport players from the web panel.
-- Add and manage admin notes for players.
-- View and edit player inventories and ender chests.
-- Manage the server whitelist.
-
-### Server Configuration
-
-- Modify common server settings such as MOTD, view distance, and simulation distance.
-- Configure game rules across worlds.
-- Upload and manage the server icon.
-- Manage supported server-side settings directly from the dashboard.
-
-### Files, Datapacks, and Mods
-
-- Browse server files and directories directly in the browser.
-- Open files and folders from the whole row bubble for faster navigation.
-- Edit configuration files from the web interface.
-- Upload, rename, download, and delete files while staying in context.
-- Upload and manage datapacks.
-- Maintain NeoForge mods locally from ForgeDash.
-- View installed mod state.
-- Upload mod JAR files.
-- Search for mods through Modrinth support.
-
-### Backup System
-
-- Create manual backups instantly.
-- Schedule automatic backups.
-- Download backup archives.
-- Configure backup retention with a maximum backup limit.
-
-### Console and Moderation Tools
-
-- Execute console commands remotely.
-- Teleport players to coordinates or to other players.
-- Broadcast messages as the server or as an admin.
-- Use the player freeze system for moderation workflows.
-- Register web admins through time-limited in-game registration codes.
-
-### SSO and Approval Workflow
-
-- NeoDash bridge SSO bootstrap flow.
-- Waiting room for identities pending admin approval.
-- Review pending bridge users directly from the Users page.
-- Assign roles during bridge approval.
-- Bridge-aware navigation and session handoff.
-- NeoDash restart handoff for configured start paths and startup-log visibility.
-
-### GitHub-Backed Updates
-
-- Release checks targeted at `Framepersecond/ForgeDash`.
-- Rate-limit-aware update scanning.
-- Manual retry support for update scans.
-- Staged updates through the NeoForge mods workflow.
-- Clearer update workflow for server operators.
-
-### Responsive Web UI
-
-- Reworked global scrolling behavior.
-- Mobile-first handling for Players, Tasks, Audit, and Guardian pages.
-- Improved overflow and clipping behavior for action menus and card actions.
-- Better mobile form layouts in Settings pages.
-- Smooth Dash motion system with reduced-motion support.
+- **4.0:** introduced the shared motion system, compact paged Guardian, whole-row files, in-place uploads, loader-aware updates and better NeoDash handoff.
+- **4.1:** completed Staff, delivery, profiler and Doctor workflows; hardened backups and crash paths; preserved sessions and tested every visible selection.
+- **4.2:** added durable maintenance, incident, recovery, compatibility, capacity, permission and automation workflows.
+- **4.3:** adds the 25-part Intelligence Center, transactional restore, action guardrails, public health reporting, stricter validation and smoother page swaps.
+- **4.4:** ports ForgeDash to Minecraft 26.2, Java 25 and NeoForge 26.2.0.72; Operations is removed in favor of Intelligence.
+- **4.5:** adds Dash AI and restores native, tested artifacts for every Minecraft 1.21 patch plus 26.2 with version-specific NeoForge metadata and compatibility adapters.
+- **4.5.1:** adds a native Minecraft 26.3 artifact built against NeoForge 26.3.0.3-beta, the newest published 26.3 build.
 
 ## Installation
 
-1. Download the latest ForgeDash release JAR from the [releases page](../../releases).
-2. Place the JAR file in your NeoForge server's `mods` folder.
-3. Restart your Minecraft server.
-4. Open the generated ForgeDash configuration and adjust the web port if needed. The default port is `8080`.
-5. Restart the server again to apply configuration changes.
+1. Put the JAR matching the server's exact Minecraft version in the `mods` folder, for example `forgedash-mc1.21.8-5.0.0.jar` or `forgedash-mc26.3-5.0.0.jar`.
+2. Restart the server once.
+3. Run `/dash register` as an operator.
+4. Open the one-time setup URL and create the first web admin.
 
-## Initial Setup
-
-1. Join your server as an operator.
-2. Run `/dash register` in-game to generate a registration code.
-3. Open the dashboard in your browser:
-
-   ```text
-   http://localhost:8080
-   ```
-
-   Replace `8080` with your configured port if you changed it.
-
-4. Enter the registration code and create your admin account.
-5. Log in and start managing your server through ForgeDash.
-
-> For production use, run ForgeDash behind HTTPS through a reverse proxy or a secure hosting panel whenever the dashboard is exposed outside your local machine.
+Configuration is stored in the ForgeDash config directory. Set `panel-url` to the public HTTPS address when it differs from the local bind address.
 
 ## Commands
 
-| Command | Description | Permission |
-| --- | --- | --- |
-| `/dash register` | Generates a web registration code that expires after 5 minutes. | `dash.register` |
+| Command | Description |
+|---|---|
+| `/dash register` | Creates a short-lived setup or registration code. |
+| `/dash update` | Stages the newest verified ForgeDash release when enabled. |
+| `/dash port <port>` | Changes the dashboard port. |
 
-## Permissions
 
-| Permission | Description | Default |
-| --- | --- | --- |
-| `dash.register` | Allows a player to generate web registration codes. | `op` |
+## Hosting behind a reverse proxy
 
-## Configuration
-
-ForgeDash creates a server-side configuration file on first start. Use it to adjust the dashboard port, database storage, backup retention, and related server settings.
-
-Example configuration:
-
-```yaml
-# Web server port for the admin dashboard
-port: 8080
-
-# Database settings for player data tracking
-database:
-  type: sqlite
-  file: dash.db
-
-# Backup settings
-backups:
-  directory: backups
-  max-backups: 10
-```
-
-### Configuration Options
-
-| Option | Description | Default |
-| --- | --- | --- |
-| `port` | Web server port used by the dashboard. | `8080` |
-| `database.type` | Database backend for player data tracking. Currently supports SQLite. | `sqlite` |
-| `database.file` | SQLite database file name. | `dash.db` |
-| `backups.directory` | Directory used for backup archives. | `backups` |
-| `backups.max-backups` | Maximum number of backups to retain. | `10` |
-
-## Supported Versions
-
-| Requirement | Supported |
-| --- | --- |
-| Minecraft | `1.21`, `1.21.1`, `1.21.2`, `1.21.3`, `1.21.4+` |
-| Server software | NeoForge servers |
-| Java | `21` or higher |
+Set `base-path` when the panel is served below a sub-path, for example `/admin`
+for `https://example.org/admin/`. Every link, form target and asset URL is then
+emitted with that prefix. Configure the proxy to strip the prefix before
+forwarding — `proxy_pass http://127.0.0.1:8080/` with the trailing slash in
+nginx, or Traefik's `StripPrefix` middleware. When `base-path` is left blank, an
+`X-Forwarded-Prefix` header sent by the proxy is honoured instead. Forward
+`Host` (or `X-Forwarded-Host`) and `X-Forwarded-Proto` so the same-origin checks
+see the browser-facing address.
 
 ## Security
 
-ForgeDash includes several built-in security measures for safer server administration:
+ForgeDash enforces authenticated sessions, CSRF checks, server-side permissions, bounded inputs, canonical file paths, protected files, guarded archives, SSRF-resistant downloads and audited high-value actions. The Intelligence policy layer adds reasons, quiet windows, verified-backup checks, JIT rights and dual approval.
 
-- Registration codes expire after 5 minutes.
-- Session-based authentication with secure cookie handling.
-- Explicit logout flow and session hardening updates.
-- Admin credentials are hashed before storage.
-- File uploads are validated.
-- File paths are sanitized to reduce traversal risks.
-- Administrative actions are logged with IP tracking.
-- Bridge approvals keep SSO identities gated behind admin review.
+Use TLS or a trusted reverse proxy and restrict the panel to staff.
 
-## Recommended Production Setup
+## Requirements
 
-When exposing the dashboard publicly, use a secure deployment setup:
+- Minecraft 1.21 through 1.21.11 with the matching `mc1.21.x` artifact and Java 21.
+- Minecraft 26.2 with `forgedash-mc26.2-5.0.0.jar`, NeoForge 26.2.x and Java 25.
+- Minecraft 26.3 with `forgedash-mc26.3-5.0.0.jar`, NeoForge 26.3.0.3-beta (no stable 26.3 build published yet) and Java 25.
+- Use the exact artifact for the Minecraft patch. ForgeDash deliberately does not claim one binary across incompatible Minecraft namespaces.
 
-- Put ForgeDash behind HTTPS.
-- Restrict the dashboard port with a firewall where possible.
-- Use strong admin credentials.
-- Only approve bridge users you trust.
-- Keep ForgeDash updated through the latest GitHub release.
-- Regularly download or rotate important backups.
-- Review Guardian activity, incidents, alert rules, and retention settings regularly.
+Build one target with `./gradlew build -Pdash_target=1.21.8`, or build and test the complete matrix on Windows with `./build-all-targets.ps1`.
 
-## Previous Release
+## Release Status
 
-### ForgeDash 3.1
+Current release: **ForgeDash 5.0.0**
 
-ForgeDash 3.1 introduced the first premium motion pass, local NeoForge maintenance, Modrinth browser support, notifications, staff workflow, graph snapshots, mobile navigation fixes, build stabilization, and NeoDash restart handoff.
-
-## Author
-
-Developed by **Frxme**.
-
-## License
-
-This project is licensed under the **BSD 3-Clause License**. See [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-
-## Partner
-
-<a href="https://emeraldhost.de/frxme">
-  <img src="https://cdn.emeraldhost.de/branding/icon/icon.png" width="80" alt="Emerald Host Logo">
-</a>
-
-### Powered by EmeraldHost
-
-*DDoS-Protection, NVMe Performance und 99.9% Uptime.*  
-*Der Host meines Vertrauens für alle Development-Server.*
-
-<a href="https://emeraldhost.de/frxme">
-  <img src="https://img.shields.io/badge/Code-Frxme10-10b981?style=for-the-badge&logo=gift&logoColor=white&labelColor=0f172a" alt="Use code Frxme10 for 10% off">
-</a>
-
-</div>
-
----
-
-*For issues, feature requests, or contributions, please visit the [GitHub repository](../../issues).*
+See [RELEASE_NOTES.md](./RELEASE_NOTES.md), [GITHUB_RELEASE_4.5.md](./GITHUB_RELEASE_4.5.md) and [MODRINTH_README.md](./MODRINTH_README.md).
